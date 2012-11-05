@@ -15,7 +15,43 @@ namespace SpaceGame.Models
 	/// This BasicModel class should contain all the needed properties and methods in order to render a model on the screen and move it
 	/// within our game.  All enemy logic should be defined in it's respective class and NOT this one since this is simply our foundation.
 	/// </summary>
-	class BasicModel
+	public abstract class BasicModel
 	{
+		public Model model { get; protected set; }
+		protected Matrix world = Matrix.Identity;
+
+		public BasicModel(Game game, Model inputModel)
+		{
+			model = inputModel;	
+		}
+
+		public virtual void Update()
+		{
+
+		}
+
+		public virtual void Draw(Player.Camera camera)
+		{
+			Matrix[] transforms = new Matrix[model.Bones.Count];
+			model.CopyAbsoluteBoneTransformsTo(transforms);
+
+			foreach (ModelMesh mesh in model.Meshes)
+			{
+				foreach (BasicEffect effect in mesh.Effects)
+				{
+					effect.EnableDefaultLighting();
+					effect.Projection = camera.projection;
+					effect.View = camera.view;
+					effect.World = GetWorld() * mesh.ParentBone.Transform;
+				}
+				mesh.Draw();
+			}
+		}
+
+		public virtual Matrix GetWorld()
+		{
+			return world;
+		}
+
 	}
 }

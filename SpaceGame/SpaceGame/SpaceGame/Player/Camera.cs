@@ -18,10 +18,18 @@ namespace SpaceGame.Player
 	/// </summary>
 	public class Camera : Microsoft.Xna.Framework.GameComponent
 	{
-		public Camera(Game game)
-			: base(game)
+		private Game game { get; set; }
+		public Matrix view { get; protected set; }
+		public Matrix projection { get; protected set; }
+
+		public Camera(Game inputGame, Vector3 inputPosition, Vector3 inputTarget, Vector3 inputUp)
+			: base(inputGame)
 		{
-			// TODO: Construct any child components here
+			game = inputGame;
+
+			view = Matrix.CreateLookAt(inputPosition, inputTarget, inputUp);
+
+			projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, game.GraphicsDevice.Viewport.AspectRatio, 1, 3000);
 		}
 
 		/// <summary>
@@ -35,13 +43,11 @@ namespace SpaceGame.Player
 			base.Initialize();
 		}
 
-		/// <summary>
-		/// Allows the game component to update itself.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		public override void Update(GameTime gameTime)
+		public void UpdateCamera(GameTime gameTime, PlayerShip currentShip)
 		{
-			// TODO: Add your update code here
+			view = Matrix.CreateLookAt((currentShip.position + new Vector3(0, 0, -50)), currentShip.position, Vector3.Up);
+
+			projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, game.GraphicsDevice.Viewport.AspectRatio, 1, 3000);
 
 			base.Update(gameTime);
 		}

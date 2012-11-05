@@ -18,6 +18,11 @@ namespace SpaceGame
 	{
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
+		SpriteFont debugText;
+
+		public Models.ModelManager modelManager { get; protected set; }
+		public Player.PlayerShip playerShip { get; protected set; }
+		public Player.Camera camera { get; protected set; }
 
 		public Game1()
 		{
@@ -33,7 +38,11 @@ namespace SpaceGame
 		/// </summary>
 		protected override void Initialize()
 		{
-			// TODO: Add your initialization logic here
+			camera = new Player.Camera(this, new Vector3(0, 0, -50), Vector3.Zero, Vector3.Up);
+			Components.Add(camera);
+
+			Model playerShipModel = Content.Load<Model>(@"Models\spaceship");
+			playerShip = new Player.PlayerShip(this, playerShipModel);
 
 			base.Initialize();
 		}
@@ -46,6 +55,8 @@ namespace SpaceGame
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
+
+			debugText = Content.Load<SpriteFont>(@"Misc\DebugText");
 
 			// TODO: use this.Content to load your game content here
 		}
@@ -70,7 +81,8 @@ namespace SpaceGame
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 				this.Exit();
 
-			// TODO: Add your update logic here
+			playerShip.Update();
+			camera.UpdateCamera(gameTime, playerShip);
 
 			base.Update(gameTime);
 		}
@@ -81,11 +93,18 @@ namespace SpaceGame
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
-			GraphicsDevice.Clear(Color.CornflowerBlue);
+			GraphicsDevice.Clear(Color.Black);
 
-			// TODO: Add your drawing code here
+			playerShip.Draw(camera);
 
 			base.Draw(gameTime);
+
+			spriteBatch.Begin();
+
+			string debug = "Position: " + playerShip.position.X + ", " + playerShip.position.Y + ", " + playerShip.position.Z;
+			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
+
+			spriteBatch.End();
 		}
 	}
 }

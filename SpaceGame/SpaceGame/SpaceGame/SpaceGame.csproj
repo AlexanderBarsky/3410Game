@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ModelManager.cs" />
     <Compile Include="Models\Projectile.cs" />
     <Compile Include="Player\Camera.cs" />
     <Compile Include="Levels\Level.cs" />
