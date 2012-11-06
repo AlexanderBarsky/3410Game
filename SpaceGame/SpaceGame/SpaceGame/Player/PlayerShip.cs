@@ -30,19 +30,47 @@ namespace SpaceGame.Player
 		{
 			if (Keyboard.GetState().IsKeyDown(Keys.W))
 			{
-				position -= Vector3.Up;
+				if (position.Y >= -21)
+				{
+					position -= Vector3.Up;
+				}
+				else
+				{
+					position = new Vector3(position.X, -22, position.Z);
+				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.S))
 			{
-				position -= Vector3.Down;
+				if (position.Y <= 21)
+				{
+					position -= Vector3.Down;
+				}
+				else
+				{
+					position = new Vector3(position.X, 22, position.Z);
+				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.A))
 			{
-				position -= Vector3.Left;
+				if (position.X <= 39)
+				{
+					position -= Vector3.Left;
+				}
+				else
+				{
+					position = new Vector3(40, position.Y, position.Z);
+				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.D))
 			{
-				position -= Vector3.Right;
+				if (position.X >= -39)
+				{
+					position -= Vector3.Right;
+				}
+				else
+				{
+					position = new Vector3(-40, position.Y, position.Z);
+				}
 			}
 
 			position += Vector3.Forward;
