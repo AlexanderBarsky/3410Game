@@ -18,7 +18,6 @@ namespace SpaceGame.Player
 	public class PlayerShip : Models.BasicModel
 	{
 		public Vector3 position { get; protected set; }
-		public Vector3 direction = Vector3.Forward;
 
 		public PlayerShip(Game game, Model inputModel)
 			: base(game, inputModel)
@@ -39,14 +38,22 @@ namespace SpaceGame.Player
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.A))
 			{
-				position += Vector3.Left;
+				position -= Vector3.Left;
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.D))
 			{
-				position += Vector3.Right;
+				position -= Vector3.Right;
 			}
 
+			position += Vector3.Forward;
+
 			base.Update();
+		}
+
+		public override void Draw(Camera camera)
+		{
+			world = Matrix.CreateWorld(new Vector3(0, 0, position.Z), Vector3.Forward, Vector3.Up);
+			base.Draw(camera);
 		}
 	}
 }

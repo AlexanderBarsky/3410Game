@@ -38,7 +38,7 @@ namespace SpaceGame
 		/// </summary>
 		protected override void Initialize()
 		{
-			camera = new Player.Camera(this, new Vector3(0, 0, -50), Vector3.Zero, Vector3.Up);
+			camera = new Player.Camera(this, 1000.0f * Vector3.Backward, Vector3.Zero, Vector3.Up);
 			Components.Add(camera);
 
 			Model playerShipModel = Content.Load<Model>(@"Models\spaceship");
@@ -101,7 +101,8 @@ namespace SpaceGame
 
 			spriteBatch.Begin();
 
-			string debug = "Position: " + playerShip.position.X + ", " + playerShip.position.Y + ", " + playerShip.position.Z;
+			string debug = "Position: " + playerShip.position.X + ", " + playerShip.position.Y + ", " + playerShip.position.Z + "\n" +
+						   "Camera Position: " + camera.position.X + ", " + camera.position.Y + ", " + camera.position.Z + "\n";
 			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
 
 			spriteBatch.End();
