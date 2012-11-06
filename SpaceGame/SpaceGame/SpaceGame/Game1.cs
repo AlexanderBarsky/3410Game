@@ -38,11 +38,15 @@ namespace SpaceGame
 		/// </summary>
 		protected override void Initialize()
 		{
+			//Create the camera 1000 units behind Vector3.Zero where playerShip spawns.
 			camera = new Player.Camera(this, 1000.0f * Vector3.Backward, Vector3.Zero, Vector3.Up);
 			Components.Add(camera);
 
-			Model playerShipModel = Content.Load<Model>(@"Models\spaceship");
+			Model playerShipModel = Content.Load<Model>(@"Models\PlayerShipModel");
 			playerShip = new Player.PlayerShip(this, playerShipModel);
+
+			modelManager = new Models.ModelManager(this);
+			Components.Add(modelManager);
 
 			base.Initialize();
 		}
@@ -94,15 +98,19 @@ namespace SpaceGame
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.Black);
+			Models.BasicModel asteroid = modelManager.models[0];
 
 			playerShip.Draw(camera);
 
 			base.Draw(gameTime);
 
+			//Debug Text Rendering.
 			spriteBatch.Begin();
 
-			string debug = "Position: " + playerShip.position.X + ", " + playerShip.position.Y + ", " + playerShip.position.Z + "\n" +
-						   "Camera Position: " + camera.position.X + ", " + camera.position.Y + ", " + camera.position.Z + "\n";
+			string debug = "Position: " + playerShip.position.ToString() + "\n" +
+						   "Camera Position: " + camera.position.ToString() +"\n" +
+						   "Camera Target: " + camera.target.ToString() + "\n" +
+						   "Asteroid Position: " + asteroid.position.ToString();
 			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
 
 			spriteBatch.End();

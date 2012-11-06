@@ -18,6 +18,7 @@ namespace SpaceGame.Models
 	public abstract class BasicModel
 	{
 		public Model model { get; protected set; }
+		public Vector3 position { get; protected set; }
 		protected Matrix world = Matrix.Identity;
 
 		public BasicModel(Game game, Model inputModel)

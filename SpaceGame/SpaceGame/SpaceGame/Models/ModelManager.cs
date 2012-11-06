@@ -17,7 +17,7 @@ namespace SpaceGame.Models
 	/// </summary>
 	public class ModelManager : DrawableGameComponent
 	{
-		List<BasicModel> models = new List<BasicModel>();
+		public List<BasicModel> models = new List<BasicModel>();
 
 		public ModelManager(Game game)
 			: base(game)
@@ -31,7 +31,11 @@ namespace SpaceGame.Models
 		/// </summary>
 		public override void Initialize()
 		{
-			// TODO: Add your initialization code here
+			Model asteroid = ((Game1)Game).Content.Load<Model>(@"Models/LargeAsteroid");
+			//Example Asteroids.
+			Asteroid asteroid1 = new Asteroid((Game1)Game, asteroid, new Vector3(0, 0, -1500));
+
+			models.Add(asteroid1);
 
 			base.Initialize();
 		}

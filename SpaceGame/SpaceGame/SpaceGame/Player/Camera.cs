@@ -21,7 +21,7 @@ namespace SpaceGame.Player
 		private Game game { get; set; }
 		public Matrix view { get; protected set; }
 		public Matrix projection { get; protected set; }
-		public Vector3 position;
+		public Vector3 position, target;
 
 		public Camera(Game inputGame, Vector3 inputPosition, Vector3 inputTarget, Vector3 inputUp)
 			: base(inputGame)
@@ -31,6 +31,7 @@ namespace SpaceGame.Player
 			view = Matrix.CreateLookAt(inputPosition, inputTarget, inputUp);
 			projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(MathHelper.Pi), game.GraphicsDevice.Viewport.AspectRatio, 1, 3000);
 			position = inputPosition;
+			target = inputTarget;
 		}
 
 		/// <summary>
@@ -46,8 +47,9 @@ namespace SpaceGame.Player
 
 		public void UpdateCamera(GameTime gameTime, PlayerShip currentShip)
 		{
-			view = Matrix.CreateLookAt(position, currentShip.position, Vector3.Up);
+			view = Matrix.CreateLookAt(position, target, Vector3.Up);
 			position += Vector3.Forward;
+			target += Vector3.Forward;
 
 			base.Update(gameTime);
 		}

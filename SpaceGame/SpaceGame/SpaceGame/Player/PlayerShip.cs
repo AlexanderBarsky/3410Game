@@ -17,8 +17,6 @@ namespace SpaceGame.Player
 	/// </summary>
 	public class PlayerShip : Models.BasicModel
 	{
-		public Vector3 position { get; protected set; }
-
 		public PlayerShip(Game game, Model inputModel)
 			: base(game, inputModel)
 		{
@@ -30,46 +28,46 @@ namespace SpaceGame.Player
 		{
 			if (Keyboard.GetState().IsKeyDown(Keys.W))
 			{
-				if (position.Y >= -21)
+				if (position.Y <= 24)
 				{
-					position -= Vector3.Up;
+					position += Vector3.Up;
 				}
 				else
 				{
-					position = new Vector3(position.X, -22, position.Z);
+					position = new Vector3(position.X, 25, position.Z);
 				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.S))
 			{
-				if (position.Y <= 21)
+				if (position.Y >= -24)
 				{
-					position -= Vector3.Down;
+					position += Vector3.Down;
 				}
 				else
 				{
-					position = new Vector3(position.X, 22, position.Z);
+					position = new Vector3(position.X, -25, position.Z);
 				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.A))
 			{
-				if (position.X <= 39)
-				{
-					position -= Vector3.Left;
-				}
-				else
-				{
-					position = new Vector3(40, position.Y, position.Z);
-				}
-			}
-			if (Keyboard.GetState().IsKeyDown(Keys.D))
-			{
 				if (position.X >= -39)
 				{
-					position -= Vector3.Right;
+					position += Vector3.Left;
 				}
 				else
 				{
 					position = new Vector3(-40, position.Y, position.Z);
+				}
+			}
+			if (Keyboard.GetState().IsKeyDown(Keys.D))
+			{
+				if (position.X <= 39)
+				{
+					position += Vector3.Right;
+				}
+				else
+				{
+					position = new Vector3(40, position.Y, position.Z);
 				}
 			}
 
@@ -80,7 +78,7 @@ namespace SpaceGame.Player
 
 		public override void Draw(Camera camera)
 		{
-			world = Matrix.CreateWorld(new Vector3(0, 0, position.Z), Vector3.Forward, Vector3.Up);
+			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 			base.Draw(camera);
 		}
 	}
