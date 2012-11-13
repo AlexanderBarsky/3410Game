@@ -33,9 +33,19 @@ namespace SpaceGame.Models
 		{
 			Model asteroid = ((Game1)Game).Content.Load<Model>(@"Models/LargeAsteroid");
 			//Example Asteroids.
-			Asteroid asteroid1 = new Asteroid((Game1)Game, asteroid, new Vector3(0, 0, -1500));
+			Asteroid asteroid1 = new Asteroid((Game1)Game, asteroid, new Vector3(0, 0, -500));
+			Asteroid asteroid2 = new Asteroid((Game1)Game, asteroid, new Vector3(-1.05f, -1.05f, -1000f));
+			Asteroid asteroid3 = new Asteroid((Game1)Game, asteroid, new Vector3(1.05f, -1.05f, -1500f));
+			Asteroid asteroid4 = new Asteroid((Game1)Game, asteroid, new Vector3(1.10f, -1.10f, -2000f));
+			Asteroid asteroid5 = new Asteroid((Game1)Game, asteroid, new Vector3(-1.25f, -1.25f, -2500f));
+			Asteroid asteroid6 = new Asteroid((Game1)Game, asteroid, new Vector3(-1.25f, 1.25f, -3000));
 
 			models.Add(asteroid1);
+			models.Add(asteroid2);
+			models.Add(asteroid3);
+			models.Add(asteroid4);
+			models.Add(asteroid5);
+			models.Add(asteroid6);
 
 			base.Initialize();
 		}

@@ -29,7 +29,7 @@ namespace SpaceGame.Player
 			game = inputGame;
 
 			view = Matrix.CreateLookAt(inputPosition, inputTarget, inputUp);
-			projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(MathHelper.Pi), game.GraphicsDevice.Viewport.AspectRatio, 1, 3000);
+			projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(MathHelper.Pi), game.GraphicsDevice.Viewport.AspectRatio, 1, 5000);
 			position = inputPosition;
 			target = inputTarget;
 		}

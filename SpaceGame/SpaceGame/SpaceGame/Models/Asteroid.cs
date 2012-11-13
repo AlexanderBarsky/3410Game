@@ -17,37 +17,19 @@ namespace SpaceGame.Models
 	/// </summary>
 	class Asteroid : BasicModel
 	{
-		//Rotation mechanics
-		Matrix rotation = Matrix.Identity;
-		float rotationValue { get; set; }
-
 		public Asteroid(Game inputGame, Model inputModel , Vector3 inputPosition)
 			: base(inputGame, inputModel)
 		{
 			position = inputPosition;
 
-			//Chooses a random direction to spin.
-			Random random = new Random();
-			if (random.Next(0, 1) == 1)
-			{
-				rotationValue = 1.0f;
-			}
-			else
-			{
-				rotationValue = -1.0f;
-			}
+			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 		}
 
 		public override void Update()
 		{
-			rotation *= Matrix.CreateRotationY(rotationValue * (MathHelper.Pi / 180));
+			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 
 			base.Update();
-		}
-
-		public override Matrix GetWorld()
-		{
-			return world * rotation;
 		}
 	}
 }

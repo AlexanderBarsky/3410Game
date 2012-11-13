@@ -17,6 +17,14 @@ namespace SpaceGame.Player
 	/// </summary>
 	public class PlayerShip : Models.BasicModel
 	{
+		//Control Dimensions
+		const float TOP_REGION_BOUNDARY = 1.3f;
+		const float BOTTOM_REGION_BOUNDARY = -1.3f;
+		const float LEFT_REGION_BOUNDARY = -2.1f;
+		const float RIGHT_REGION_BOUNDARY = 2.1f;
+		const float BOUNDARY_OFFSET = 0.05f;
+		const float MOVEMENT_RATIO = 0.05f;
+
 		public PlayerShip(Game game, Model inputModel)
 			: base(game, inputModel)
 		{
@@ -28,58 +36,54 @@ namespace SpaceGame.Player
 		{
 			if (Keyboard.GetState().IsKeyDown(Keys.W))
 			{
-				if (position.Y <= 24)
+				if (position.Y <= (TOP_REGION_BOUNDARY - BOUNDARY_OFFSET))
 				{
-					position += Vector3.Up;
+					position += MOVEMENT_RATIO * Vector3.Up;
 				}
 				else
 				{
-					position = new Vector3(position.X, 25, position.Z);
+					position = new Vector3(position.X, TOP_REGION_BOUNDARY, position.Z);
 				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.S))
 			{
-				if (position.Y >= -24)
+				if (position.Y >= (BOTTOM_REGION_BOUNDARY + BOUNDARY_OFFSET))
 				{
-					position += Vector3.Down;
+					position += MOVEMENT_RATIO * Vector3.Down;
 				}
 				else
 				{
-					position = new Vector3(position.X, -25, position.Z);
+					position = new Vector3(position.X, BOTTOM_REGION_BOUNDARY, position.Z);
 				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.A))
 			{
-				if (position.X >= -39)
+				if (position.X >= (LEFT_REGION_BOUNDARY + BOUNDARY_OFFSET))
 				{
-					position += Vector3.Left;
+					position += MOVEMENT_RATIO * Vector3.Left;
 				}
 				else
 				{
-					position = new Vector3(-40, position.Y, position.Z);
+					position = new Vector3(LEFT_REGION_BOUNDARY, position.Y, position.Z);
 				}
 			}
 			if (Keyboard.GetState().IsKeyDown(Keys.D))
 			{
-				if (position.X <= 39)
+				if (position.X <= (RIGHT_REGION_BOUNDARY - BOUNDARY_OFFSET))
 				{
-					position += Vector3.Right;
+					position += MOVEMENT_RATIO * Vector3.Right;
 				}
 				else
 				{
-					position = new Vector3(40, position.Y, position.Z);
+					position = new Vector3(RIGHT_REGION_BOUNDARY, position.Y, position.Z);
 				}
 			}
 
 			position += Vector3.Forward;
 
-			base.Update();
-		}
-
-		public override void Draw(Camera camera)
-		{
 			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
-			base.Draw(camera);
+
+			base.Update();
 		}
 	}
 }

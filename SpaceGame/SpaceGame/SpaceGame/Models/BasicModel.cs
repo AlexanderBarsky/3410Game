@@ -20,10 +20,12 @@ namespace SpaceGame.Models
 		public Model model { get; protected set; }
 		public Vector3 position { get; protected set; }
 		protected Matrix world = Matrix.Identity;
+		private Game game;
 
-		public BasicModel(Game game, Model inputModel)
+		public BasicModel(Game inputGame, Model inputModel)
 		{
-			model = inputModel;	
+			model = inputModel;
+			game = inputGame;
 		}
 
 		public virtual void Update()
@@ -33,6 +35,8 @@ namespace SpaceGame.Models
 
 		public virtual void Draw(Player.Camera camera)
 		{
+			game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
 			Matrix[] transforms = new Matrix[model.Bones.Count];
 			model.CopyAbsoluteBoneTransformsTo(transforms);
 

@@ -47,8 +47,6 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Models\PlayerShipModel.x">
       <Name>PlayerShipModel</Name>
       <Importer>XImporter</Importer>

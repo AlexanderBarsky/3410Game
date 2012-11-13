@@ -27,6 +27,8 @@ namespace SpaceGame
 		public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
+			graphics.PreferredBackBufferWidth = 1280;
+			graphics.PreferredBackBufferHeight = 720;
 			Content.RootDirectory = "Content";
 		}
 
@@ -39,14 +41,14 @@ namespace SpaceGame
 		protected override void Initialize()
 		{
 			//Create the camera 1000 units behind Vector3.Zero where playerShip spawns.
-			camera = new Player.Camera(this, 1000.0f * Vector3.Backward, Vector3.Zero, Vector3.Up);
+			camera = new Player.Camera(this, 50.0f * Vector3.Backward, Vector3.Zero, Vector3.Up);
 			Components.Add(camera);
-
-			Model playerShipModel = Content.Load<Model>(@"Models\PlayerShipModel");
-			playerShip = new Player.PlayerShip(this, playerShipModel);
 
 			modelManager = new Models.ModelManager(this);
 			Components.Add(modelManager);
+
+			Model playerShipModel = Content.Load<Model>(@"Models\PlayerShipModel");
+			playerShip = new Player.PlayerShip(this, playerShipModel);
 
 			base.Initialize();
 		}
@@ -100,20 +102,23 @@ namespace SpaceGame
 			GraphicsDevice.Clear(Color.Black);
 			Models.BasicModel asteroid = modelManager.models[0];
 
-			playerShip.Draw(camera);
 
-			base.Draw(gameTime);
-
+			/*
 			//Debug Text Rendering.
 			spriteBatch.Begin();
 
-			string debug = "Position: " + playerShip.position.ToString() + "\n" +
-						   "Camera Position: " + camera.position.ToString() +"\n" +
+			string debug = "Ship Position: " + playerShip.position.ToString() + "\n" +
+						   "Camera Position: " + camera.position.ToString() + "\n" +
 						   "Camera Target: " + camera.target.ToString() + "\n" +
 						   "Asteroid Position: " + asteroid.position.ToString();
 			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
 
 			spriteBatch.End();
+			*/
+
+			playerShip.Draw(camera);
+
+			base.Draw(gameTime);
 		}
 	}
 }
