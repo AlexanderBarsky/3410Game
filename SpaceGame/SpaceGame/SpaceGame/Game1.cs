@@ -24,11 +24,14 @@ namespace SpaceGame
 		public Player.PlayerShip playerShip { get; protected set; }
 		public Player.Camera camera { get; protected set; }
 
+		private string debug { get; set; }
+		private bool playerDead = false;
+
 		public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
 			graphics.PreferredBackBufferWidth = 1280;
-			graphics.PreferredBackBufferHeight = 720;
+			graphics.PreferredBackBufferHeight = 960;
 			Content.RootDirectory = "Content";
 		}
 
@@ -40,7 +43,7 @@ namespace SpaceGame
 		/// </summary>
 		protected override void Initialize()
 		{
-			//Create the camera 1000 units behind Vector3.Zero where playerShip spawns.
+			//Create the camera 50 units behind Vector3.Zero where playerShip spawns.
 			camera = new Player.Camera(this, 50.0f * Vector3.Backward, Vector3.Zero, Vector3.Up);
 			Components.Add(camera);
 
@@ -90,6 +93,11 @@ namespace SpaceGame
 			playerShip.Update();
 			camera.UpdateCamera(gameTime, playerShip);
 
+			if (Keyboard.GetState().IsKeyDown(Keys.Space))
+			{
+				modelManager.FireShot(playerShip, gameTime);
+			}
+
 			base.Update(gameTime);
 		}
 
@@ -100,25 +108,35 @@ namespace SpaceGame
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.Black);
-			Models.BasicModel asteroid = modelManager.models[0];
 
 
-			/*
 			//Debug Text Rendering.
 			spriteBatch.Begin();
 
-			string debug = "Ship Position: " + playerShip.position.ToString() + "\n" +
-						   "Camera Position: " + camera.position.ToString() + "\n" +
-						   "Camera Target: " + camera.target.ToString() + "\n" +
-						   "Asteroid Position: " + asteroid.position.ToString();
-			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
+			if (!playerDead)
+			{
+				debug = "Ship Position: " + playerShip.position.ToString() + "\n" +
+							   "Camera Position: " + camera.position.ToString() + "\n" +
+							   "Camera Target: " + camera.target.ToString();
+				spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
+			}
+			else
+			{
+				debug = "DEAD";
+				spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
+			}
 
 			spriteBatch.End();
-			*/
 
 			playerShip.Draw(camera);
 
 			base.Draw(gameTime);
+		}
+
+		public void DestroyPlayer()
+		{
+			debug = "DEAD";
+			playerDead = true;
 		}
 	}
 }

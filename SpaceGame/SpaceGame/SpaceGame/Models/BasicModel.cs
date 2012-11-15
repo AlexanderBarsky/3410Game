@@ -20,7 +20,7 @@ namespace SpaceGame.Models
 		public Model model { get; protected set; }
 		public Vector3 position { get; protected set; }
 		protected Matrix world = Matrix.Identity;
-		private Game game;
+		protected Game game;
 
 		public BasicModel(Game inputGame, Model inputModel)
 		{
@@ -58,5 +58,17 @@ namespace SpaceGame.Models
 			return world;
 		}
 
+		public bool CollidesWith(Model otherModel, Matrix otherWorld)
+		{
+			foreach (ModelMesh mesh in model.Meshes)
+			{
+				foreach (ModelMesh otherMesh in otherModel.Meshes)
+				{
+					if (mesh.BoundingSphere.Transform(GetWorld()).Intersects(otherMesh.BoundingSphere.Transform(otherWorld)))
+						return true;
+				}
+			}
+			return false;
+		}
 	}
 }

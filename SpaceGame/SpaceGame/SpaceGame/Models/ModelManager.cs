@@ -18,11 +18,16 @@ namespace SpaceGame.Models
 	public class ModelManager : DrawableGameComponent
 	{
 		public List<BasicModel> models = new List<BasicModel>();
+		public List<Projectile> shots = new List<Projectile>();
+		private Game game;
 
-		public ModelManager(Game game)
-			: base(game)
+		//Bullet variables
+		private int shotCooldown = 0;
+
+		public ModelManager(Game inputGame)
+			: base(inputGame)
 		{
-			// TODO: Construct any child components here
+			game = inputGame;
 		}
 
 		/// <summary>
@@ -64,6 +69,41 @@ namespace SpaceGame.Models
 			for (int i = 0; i < models.Count; i++)
 			{
 				models[i].Update();
+				if (models[i].position.Z > 1)
+				{
+					models.RemoveAt(i);
+				}
+				else
+				{
+					if (((Game1)Game).playerShip.CollidesWith(models[i].model, models[i].GetWorld()))
+					{
+						models.RemoveAt(i);
+						((Game1)Game).DestroyPlayer();
+						i--;
+					}
+				}
+			}
+			for (int i = 0; i < shots.Count; i++)
+			{
+				shots[i].Update();
+				if (shots[i].position.Z < -1.0f * Misc.Settings.CAMERA_DISTANCE)
+				{
+					shots.RemoveAt(i);
+					i--;
+				}
+				else
+				{
+					for (int j = 0; j < models.Count; j++)
+					{
+						if (shots[i].CollidesWith(models[j].model, models[j].GetWorld()))
+						{
+							models.RemoveAt(j);
+							shots.RemoveAt(i);
+							i--;
+							break;
+						}
+					}
+				}
 			}
 
 			base.Update(gameTime);
@@ -75,8 +115,28 @@ namespace SpaceGame.Models
 			{
 				model.Draw(((Game1)Game).camera);
 			}
+			foreach (Projectile shot in shots)
+			{
+				shot.Draw(((Game1)Game).camera);
+			}
 
 			base.Draw(gameTime);
+		}
+
+		public void FireShot(Player.PlayerShip ship, GameTime gameTime)
+		{
+			if (shotCooldown <= 0)
+			{
+				Model projectileModel = ((Game1)Game).Content.Load<Model>(@"Models/LargeAsteroid");
+				Projectile shot = new Projectile(game, projectileModel, ship.position);
+				shots.Add(shot);
+
+				shotCooldown = Misc.Settings.SHOT_DELAY;
+			}
+			else
+			{
+				shotCooldown -= gameTime.ElapsedGameTime.Milliseconds;
+			}
 		}
 	}
 }

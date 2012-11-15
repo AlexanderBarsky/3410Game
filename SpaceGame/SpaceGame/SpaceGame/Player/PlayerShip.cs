@@ -17,16 +17,8 @@ namespace SpaceGame.Player
 	/// </summary>
 	public class PlayerShip : Models.BasicModel
 	{
-		//Control Dimensions
-		const float TOP_REGION_BOUNDARY = 1.3f;
-		const float BOTTOM_REGION_BOUNDARY = -1.3f;
-		const float LEFT_REGION_BOUNDARY = -2.1f;
-		const float RIGHT_REGION_BOUNDARY = 2.1f;
-		const float BOUNDARY_OFFSET = 0.05f;
-		const float MOVEMENT_RATIO = 0.05f;
-
-		public PlayerShip(Game game, Model inputModel)
-			: base(game, inputModel)
+		public PlayerShip(Game inputGame, Model inputModel)
+			: base(inputGame, inputModel)
 		{
 			model = inputModel;
 			position = Vector3.Zero;
@@ -34,52 +26,52 @@ namespace SpaceGame.Player
 
 		public override void Update()
 		{
-			if (Keyboard.GetState().IsKeyDown(Keys.W))
+			if (Keyboard.GetState().IsKeyDown(Keys.W) || Keyboard.GetState().IsKeyDown(Keys.Up))
 			{
-				if (position.Y <= (TOP_REGION_BOUNDARY - BOUNDARY_OFFSET))
+				if (position.Y <= (Misc.Settings.TOP_REGION_BOUNDARY - Misc.Settings.BOUNDARY_OFFSET))
 				{
-					position += MOVEMENT_RATIO * Vector3.Up;
+					position += Misc.Settings.GAME_SPEED * Misc.Settings.MOVEMENT_RATIO * Vector3.Up;
 				}
 				else
 				{
-					position = new Vector3(position.X, TOP_REGION_BOUNDARY, position.Z);
+					position = new Vector3(position.X, Misc.Settings.TOP_REGION_BOUNDARY, position.Z);
 				}
 			}
-			if (Keyboard.GetState().IsKeyDown(Keys.S))
+			if (Keyboard.GetState().IsKeyDown(Keys.S) || Keyboard.GetState().IsKeyDown(Keys.Down))
 			{
-				if (position.Y >= (BOTTOM_REGION_BOUNDARY + BOUNDARY_OFFSET))
+				if (position.Y >= (Misc.Settings.BOTTOM_REGION_BOUNDARY + Misc.Settings.BOUNDARY_OFFSET))
 				{
-					position += MOVEMENT_RATIO * Vector3.Down;
+					position += Misc.Settings.GAME_SPEED * Misc.Settings.MOVEMENT_RATIO * Vector3.Down;
 				}
 				else
 				{
-					position = new Vector3(position.X, BOTTOM_REGION_BOUNDARY, position.Z);
+					position = new Vector3(position.X, Misc.Settings.BOTTOM_REGION_BOUNDARY, position.Z);
 				}
 			}
-			if (Keyboard.GetState().IsKeyDown(Keys.A))
+			if (Keyboard.GetState().IsKeyDown(Keys.A) || Keyboard.GetState().IsKeyDown(Keys.Left))
 			{
-				if (position.X >= (LEFT_REGION_BOUNDARY + BOUNDARY_OFFSET))
+				if (position.X >= (Misc.Settings.LEFT_REGION_BOUNDARY + Misc.Settings.BOUNDARY_OFFSET))
 				{
-					position += MOVEMENT_RATIO * Vector3.Left;
+					position += Misc.Settings.GAME_SPEED * Misc.Settings.MOVEMENT_RATIO * Vector3.Left;
 				}
 				else
 				{
-					position = new Vector3(LEFT_REGION_BOUNDARY, position.Y, position.Z);
+					position = new Vector3(Misc.Settings.LEFT_REGION_BOUNDARY, position.Y, position.Z);
 				}
 			}
-			if (Keyboard.GetState().IsKeyDown(Keys.D))
+			if (Keyboard.GetState().IsKeyDown(Keys.D) || Keyboard.GetState().IsKeyDown(Keys.Right))
 			{
-				if (position.X <= (RIGHT_REGION_BOUNDARY - BOUNDARY_OFFSET))
+				if (position.X <= (Misc.Settings.RIGHT_REGION_BOUNDARY - Misc.Settings.BOUNDARY_OFFSET))
 				{
-					position += MOVEMENT_RATIO * Vector3.Right;
+					position += Misc.Settings.GAME_SPEED * Misc.Settings.MOVEMENT_RATIO * Vector3.Right;
 				}
 				else
 				{
-					position = new Vector3(RIGHT_REGION_BOUNDARY, position.Y, position.Z);
+					position = new Vector3(Misc.Settings.RIGHT_REGION_BOUNDARY, position.Y, position.Z);
 				}
 			}
 
-			position += Vector3.Forward;
+			position += Misc.Settings.GAME_SPEED * Vector3.Forward;
 
 			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 
