@@ -20,5 +20,6 @@ namespace SpaceGame.Levels
 
 	class Level
 	{
+
 	}
 }

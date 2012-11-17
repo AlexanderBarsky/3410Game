@@ -25,7 +25,7 @@ namespace SpaceGame
 		public Player.Camera camera { get; protected set; }
 
 		private string debug { get; set; }
-		private bool playerDead = false;
+		private int damage = 0;
 
 		public Game1()
 		{
@@ -113,7 +113,7 @@ namespace SpaceGame
 			//Debug Text Rendering.
 			spriteBatch.Begin();
 
-			if (!playerDead)
+			if (damage == 0)
 			{
 				debug = "Ship Position: " + playerShip.position.ToString() + "\n" +
 							   "Camera Position: " + camera.position.ToString() + "\n" +
@@ -122,7 +122,7 @@ namespace SpaceGame
 			}
 			else
 			{
-				debug = "DEAD";
+				debug = "DEAD: " + damage.ToString();
 				spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
 			}
 
@@ -135,8 +135,8 @@ namespace SpaceGame
 
 		public void DestroyPlayer()
 		{
-			debug = "DEAD";
-			playerDead = true;
+			debug = "DEAD: 1";
+			damage++;
 		}
 	}
 }
