@@ -17,8 +17,6 @@ namespace SpaceGame.Models
 	/// </summary>
 	public class Projectile : BasicModel
 	{
-		const float BULLET_SPEED = 3.0f;
-
 		public Projectile(Game inputGame, Model inputModel, Vector3 inputPosition)
 			: base(inputGame, inputModel)
 		{
@@ -28,7 +26,7 @@ namespace SpaceGame.Models
 
 		public override void Update()
 		{
-			position += Misc.Settings.GAME_SPEED * BULLET_SPEED * Vector3.Forward;
+			position += Misc.Settings.GAME_SPEED * Misc.Settings.BULLET_SPEED * Vector3.Forward;
 
 			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 			

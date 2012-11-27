@@ -1,6 +1,4 @@
 Content\Misc\DebugText.xnb
 Content\Models\PlayerShipModel.xnb
-Content\Models\LargeAsteroid.xnb
-Content\Models\AsteroidTexture.xnb
-Content\Models\AsteroidTexture_0.xnb
 Content\Models\PlayerProjectile.xnb
+Content\Models\AsteroidModel.xnb

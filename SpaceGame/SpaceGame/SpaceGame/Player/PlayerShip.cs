@@ -17,11 +17,16 @@ namespace SpaceGame.Player
 	/// </summary>
 	public class PlayerShip : Models.BasicModel
 	{
+		public float health { get; protected set; }
+		public float score { get; protected set; }
+
 		public PlayerShip(Game inputGame, Model inputModel)
 			: base(inputGame, inputModel)
 		{
 			model = inputModel;
 			position = Vector3.Zero;
+			health = 100.0f;
+			score = 0.0f;
 		}
 
 		public override void Update()
@@ -76,6 +81,23 @@ namespace SpaceGame.Player
 			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 
 			base.Update();
+		}
+
+		public void DamagePlayer(float inputAmount)
+		{
+			health -= inputAmount;
+
+			if (health < 0.0f)
+			{
+				DestroyPlayer();
+			}
+		}
+
+		private void DestroyPlayer()
+		{
+			//Explode
+
+			//Change Game State
 		}
 	}
 }

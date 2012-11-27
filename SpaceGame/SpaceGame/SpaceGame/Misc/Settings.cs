@@ -22,12 +22,14 @@ namespace SpaceGame.Misc
 
 		//Firing Controls
 		static public int SHOT_DELAY { get; set; }
+		static public float BULLET_SPEED { get; private set; }
 
 		//Spawning Boundaries
 		static public float TOP_REGION_SPAWN_BOUNDARY { get; private set; }
 		static public float BOTTOM_REGION_SPAWN_BOUNDARY { get; private set; }
 		static public float LEFT_REGION_SPAWN_BOUNDARY { get; private set; }
 		static public float RIGHT_REGION_SPAWN_BOUNDARY { get; private set; }
+		static public int Z_REGION_SPAWN_BOUNDARY { get; private set; }
 
 		static Settings()
 		{
@@ -44,10 +46,13 @@ namespace SpaceGame.Misc
 			BOTTOM_REGION_SPAWN_BOUNDARY = -2.0f;
 			LEFT_REGION_SPAWN_BOUNDARY = -2.0f;
 			RIGHT_REGION_SPAWN_BOUNDARY = 2.0f;
+			Z_REGION_SPAWN_BOUNDARY = -500;
 
 			CAMERA_DISTANCE = 5000.0f;
 
 			SHOT_DELAY = 200;
+
+			BULLET_SPEED = 3.0f;
 		}
 	}
 }

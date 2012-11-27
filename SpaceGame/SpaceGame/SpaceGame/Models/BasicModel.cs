@@ -19,6 +19,7 @@ namespace SpaceGame.Models
 	{
 		public Model model { get; protected set; }
 		public Vector3 position { get; protected set; }
+		public float damageAmount { get; protected set; }
 		protected Matrix world = Matrix.Identity;
 		protected Game game;
 

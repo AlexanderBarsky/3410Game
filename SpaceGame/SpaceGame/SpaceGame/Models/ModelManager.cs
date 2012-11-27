@@ -36,17 +36,21 @@ namespace SpaceGame.Models
 		/// </summary>
 		public override void Initialize()
 		{
-			Model asteroid = ((Game1)Game).Content.Load<Model>(@"Models/LargeAsteroid");
-			//Example Asteroids.
-			Asteroid asteroid1 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.TOP_REGION_SPAWN_BOUNDARY, Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, -500));
-			Asteroid asteroid2 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.TOP_REGION_SPAWN_BOUNDARY, Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY, -1000));
-			Asteroid asteroid3 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, -1500));
-			Asteroid asteroid4 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY, -2000));
+			//Debug Setup
 
-			models.Add(asteroid1);
-			models.Add(asteroid2);
-			models.Add(asteroid3);
-			models.Add(asteroid4);
+			//Model asteroid = ((Game1)Game).Content.Load<Model>(@"Models/AsteroidModel");
+			////Example Asteroids.
+			//Asteroid asteroid1 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.TOP_REGION_SPAWN_BOUNDARY, Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, -500));
+			//Asteroid asteroid2 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.TOP_REGION_SPAWN_BOUNDARY, Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY, -1000));
+			//Asteroid asteroid3 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, -1500));
+			//Asteroid asteroid4 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY, -2000));
+
+			//models.Add(asteroid1);
+			//models.Add(asteroid2);
+			//models.Add(asteroid3);
+			//models.Add(asteroid4);
+
+			GenerateAsteroids(10);
 
 			base.Initialize();
 		}
@@ -73,8 +77,8 @@ namespace SpaceGame.Models
 				{
 					if (((Game1)Game).playerShip.CollidesWith(models[i].model, models[i].GetWorld()))
 					{
+						((Game1)Game).playerShip.DamagePlayer(models[i].damageAmount);
 						models.RemoveAt(i);
-						((Game1)Game).DestroyPlayer();
 						i--;
 					}
 				}
@@ -132,6 +136,34 @@ namespace SpaceGame.Models
 			else
 			{
 				shotCooldown -= gameTime.ElapsedGameTime.Milliseconds;
+			}
+		}
+
+		public void GenerateAsteroids(int amountToGenerate)
+		{
+			List<Asteroid> createdAsteroids = new List<Asteroid>();
+			Model asteroidModel = ((Game1)Game).Content.Load<Model>(@"Models/AsteroidModel");
+
+			Random randomValue = new Random();
+
+			for (int i = 0; i < amountToGenerate; i++)
+			{
+				//Creates an asteroid
+				Asteroid temp = new Asteroid(game, asteroidModel, new Vector3((float)randomValue.Next((int)Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, (int)Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY), (float)randomValue.Next((int)Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, (int)Misc.Settings.TOP_REGION_SPAWN_BOUNDARY), (float)randomValue.Next(Misc.Settings.Z_REGION_SPAWN_BOUNDARY, (int)((Game1)Game).playerShip.position.Z) - 50), ref randomValue);
+
+				//Checks to make sure this asteroid does not conflict with existing asteroids.
+				for (int j = 0; j < models.Count; j++)
+				{
+					//If it conflicts, generate a new one and rescan the list of models.
+					if (temp.CollidesWith(models[j].model, models[j].GetWorld()))
+					{
+						temp = new Asteroid(game, asteroidModel, new Vector3((float)randomValue.Next((int)Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, (int)Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY), (float)randomValue.Next((int)Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, (int)Misc.Settings.TOP_REGION_SPAWN_BOUNDARY), (float)randomValue.Next(Misc.Settings.Z_REGION_SPAWN_BOUNDARY, (int)((Game1)Game).playerShip.position.Z) - 50), ref randomValue);
+						j = 0;
+					}
+				}
+
+				//Success!  Add it to the list.
+				models.Add(temp);
 			}
 		}
 	}

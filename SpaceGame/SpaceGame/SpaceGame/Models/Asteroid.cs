@@ -17,17 +17,25 @@ namespace SpaceGame.Models
 	/// </summary>
 	class Asteroid : BasicModel
 	{
-		public Asteroid(Game inputGame, Model inputModel , Vector3 inputPosition)
+		protected Vector3 facingDirection { get; set; }
+		protected Vector3 upDirection { get; set; }
+
+		public Asteroid(Game inputGame, Model inputModel, Vector3 inputPosition, ref Random randomValue)
 			: base(inputGame, inputModel)
 		{
 			position = inputPosition;
 
-			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
+			facingDirection = new Vector3((float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10));
+			upDirection = new Vector3((float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10));
+
+			world = Matrix.CreateWorld(position, facingDirection, upDirection);
+
+			damageAmount = 25.0f;
 		}
 
 		public override void Update()
 		{
-			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
+			world = Matrix.CreateWorld(position, facingDirection, upDirection);
 
 			base.Update();
 		}

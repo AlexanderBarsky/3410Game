@@ -54,21 +54,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\LargeAsteroid.fbx">
-      <Name>LargeAsteroid</Name>
-      <Importer>FbxImporter</Importer>
+    <Compile Include="Models\AsteroidModel.x">
+      <Name>AsteroidModel</Name>
+      <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\AsteroidTexture.png">
-      <Name>AsteroidTexture</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Textures\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\PlayerProjectile.x">
