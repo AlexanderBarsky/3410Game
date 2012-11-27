@@ -20,6 +20,7 @@ namespace SpaceGame.Models
 		public Model model { get; protected set; }
 		public Vector3 position { get; protected set; }
 		public float damageAmount { get; protected set; }
+		public int hitsLeft { get; set; }
 		protected Matrix world = Matrix.Identity;
 		protected Game game;
 
@@ -27,6 +28,7 @@ namespace SpaceGame.Models
 		{
 			model = inputModel;
 			game = inputGame;
+			hitsLeft = 3;
 		}
 
 		public virtual void Update()
@@ -70,6 +72,11 @@ namespace SpaceGame.Models
 				}
 			}
 			return false;
+		}
+
+		public void BulletHit()
+		{
+			hitsLeft--;
 		}
 	}
 }

@@ -50,7 +50,7 @@ namespace SpaceGame.Models
 			//models.Add(asteroid3);
 			//models.Add(asteroid4);
 
-			GenerateAsteroids(10);
+			GenerateAsteroids(100);
 
 			base.Initialize();
 		}
@@ -97,8 +97,11 @@ namespace SpaceGame.Models
 					{
 						if (shots[i].CollidesWith(models[j].model, models[j].GetWorld()))
 						{
-							models.RemoveAt(j);
+							models[j].BulletHit();
+							if (models[j].hitsLeft <= 0)
+								models.RemoveAt(j);
 							shots.RemoveAt(i);
+
 							i--;
 							break;
 						}

@@ -39,5 +39,6 @@ namespace SpaceGame.Models
 
 			base.Update();
 		}
+
 	}
 }
