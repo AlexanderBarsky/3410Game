@@ -77,7 +77,7 @@ namespace SpaceGame.Models
 				{
 					if (((Game1)Game).playerShip.CollidesWith(models[i].model, models[i].GetWorld()))
 					{
-						((Game1)Game).playerShip.DamagePlayer(models[i].damageAmount);
+						((Game1)Game).playerShip.DamagePlayer(models[i].damageToPlayer);
 						models.RemoveAt(i);
 						i--;
 					}
@@ -98,8 +98,11 @@ namespace SpaceGame.Models
 						if (shots[i].CollidesWith(models[j].model, models[j].GetWorld()))
 						{
 							models[j].BulletHit();
-							if (models[j].hitsLeft <= 0)
+							if (models[j].health <= 0)
+							{
+								((Game1)Game).playerShip.playerScore += models[j].score;
 								models.RemoveAt(j);
+							}
 							shots.RemoveAt(i);
 
 							i--;

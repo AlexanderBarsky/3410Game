@@ -111,7 +111,8 @@ namespace SpaceGame
 			//Debug Text Rendering.
 			spriteBatch.Begin();
 
-			debug = "Health: " + playerShip.health.ToString();
+			debug =		"Health: " + playerShip.health.ToString() + "\n" +
+						"Score: " + playerShip.playerScore.ToString();
 			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
 
 			spriteBatch.End();

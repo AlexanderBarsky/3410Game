@@ -19,8 +19,9 @@ namespace SpaceGame.Models
 	{
 		public Model model { get; protected set; }
 		public Vector3 position { get; protected set; }
-		public float damageAmount { get; protected set; }
-		public int hitsLeft { get; set; }
+		public int damageToPlayer { get; protected set; }
+		public int health { get; protected set; }
+		public int score { get; protected set; }
 		protected Matrix world = Matrix.Identity;
 		protected Game game;
 
@@ -28,7 +29,6 @@ namespace SpaceGame.Models
 		{
 			model = inputModel;
 			game = inputGame;
-			hitsLeft = 3;
 		}
 
 		public virtual void Update()
@@ -61,7 +61,7 @@ namespace SpaceGame.Models
 			return world;
 		}
 
-		public bool CollidesWith(Model otherModel, Matrix otherWorld)
+		public virtual bool CollidesWith(Model otherModel, Matrix otherWorld)
 		{
 			foreach (ModelMesh mesh in model.Meshes)
 			{
@@ -74,9 +74,9 @@ namespace SpaceGame.Models
 			return false;
 		}
 
-		public void BulletHit()
+		public virtual void BulletHit()
 		{
-			hitsLeft--;
+			health--;
 		}
 	}
 }

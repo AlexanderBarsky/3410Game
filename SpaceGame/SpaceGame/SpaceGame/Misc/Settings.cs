@@ -31,6 +31,11 @@ namespace SpaceGame.Misc
 		static public float RIGHT_REGION_SPAWN_BOUNDARY { get; private set; }
 		static public int Z_REGION_SPAWN_BOUNDARY { get; private set; }
 
+		//Asteroid Variables
+		static public int ASTEROID_HEALTH { get; private set; }
+		static public int ASTEROID_DAMAGE { get; private set; }
+		static public int ASTEROID_SCORE { get; private set; }
+
 		static Settings()
 		{
 			GAME_SPEED = 1.0f;
@@ -53,6 +58,10 @@ namespace SpaceGame.Misc
 			SHOT_DELAY = 200;
 
 			BULLET_SPEED = 5.0f;
+
+			ASTEROID_HEALTH = 3;
+			ASTEROID_DAMAGE = 25;
+			ASTEROID_SCORE = 50;
 		}
 	}
 }

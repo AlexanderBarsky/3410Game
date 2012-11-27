@@ -17,6 +17,7 @@ namespace SpaceGame.Models
 	/// </summary>
 	class Asteroid : BasicModel
 	{
+		//Used to establish a randomize orientation on spawn.
 		protected Vector3 facingDirection { get; set; }
 		protected Vector3 upDirection { get; set; }
 
@@ -25,12 +26,16 @@ namespace SpaceGame.Models
 		{
 			position = inputPosition;
 
+			//Randomizes the orientation.
 			facingDirection = new Vector3((float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10));
 			upDirection = new Vector3((float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10), (float)randomValue.Next(-10, 10));
 
 			world = Matrix.CreateWorld(position, facingDirection, upDirection);
 
-			damageAmount = 25.0f;
+			//Asteroid properties presets.
+			damageToPlayer = Misc.Settings.ASTEROID_DAMAGE;
+			health = Misc.Settings.ASTEROID_HEALTH;
+			score = Misc.Settings.ASTEROID_SCORE;
 		}
 
 		public override void Update()
@@ -39,6 +44,5 @@ namespace SpaceGame.Models
 
 			base.Update();
 		}
-
 	}
 }

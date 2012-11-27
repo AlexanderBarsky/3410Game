@@ -17,16 +17,15 @@ namespace SpaceGame.Player
 	/// </summary>
 	public class PlayerShip : Models.BasicModel
 	{
-		public float health { get; protected set; }
-		public float score { get; protected set; }
+		public int playerScore { get; set; }
 
 		public PlayerShip(Game inputGame, Model inputModel)
 			: base(inputGame, inputModel)
 		{
 			model = inputModel;
 			position = Vector3.Zero;
-			health = 100.0f;
-			score = 0.0f;
+			health = 100;
+			score = 0;
 		}
 
 		public override void Update()
@@ -83,7 +82,7 @@ namespace SpaceGame.Player
 			base.Update();
 		}
 
-		public void DamagePlayer(float inputAmount)
+		public void DamagePlayer(int inputAmount)
 		{
 			health -= inputAmount;
 
