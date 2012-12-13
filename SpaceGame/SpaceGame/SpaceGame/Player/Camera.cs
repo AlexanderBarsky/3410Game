@@ -48,10 +48,17 @@ namespace SpaceGame.Player
 		public void UpdateCamera(GameTime gameTime, PlayerShip currentShip)
 		{
 			view = Matrix.CreateLookAt(position, target, Vector3.Up);
-			position += Misc.Settings.GAME_SPEED * Vector3.Forward;
-			target += Misc.Settings.GAME_SPEED * Vector3.Forward;
+			position += Misc.Settings.GAME_SPEED * Vector3.Forward * Misc.Settings.SHIP_SPEED;
+			target += Misc.Settings.GAME_SPEED * Vector3.Forward * Misc.Settings.SHIP_SPEED;
 
 			base.Update(gameTime);
+		}
+
+		public void Reset()
+		{
+			position = 50.0f * Vector3.Backward;
+			target = Vector3.Zero;
+			view = Matrix.CreateLookAt(position, target, Vector3.Up);
 		}
 	}
 }

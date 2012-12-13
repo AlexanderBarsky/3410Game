@@ -17,5 +17,6 @@ namespace SpaceGame.Models
 	/// </summary>
 	class BasicEnemy
 	{
+
 	}
 }

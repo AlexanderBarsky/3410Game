@@ -18,13 +18,16 @@ namespace SpaceGame
 	{
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
-		SpriteFont debugText;
+		SpriteFont displayText;
 
+		public GameState gameState { get; protected set; }
 		public Models.ModelManager modelManager { get; protected set; }
 		public Player.PlayerShip playerShip { get; protected set; }
 		public Player.Camera camera { get; protected set; }
+		public Levels.LevelManager levelManager { get; protected set; }
 
-		private string debug { get; set; }
+		private string display { get; set; }
+		public int timeToNextLevel { get; set; }
 
 		public Game1()
 		{
@@ -32,6 +35,9 @@ namespace SpaceGame
 			graphics.PreferredBackBufferWidth = 1280;
 			graphics.PreferredBackBufferHeight = 960;
 			Content.RootDirectory = "Content";
+
+			IsFixedTimeStep = true;
+			TargetElapsedTime = TimeSpan.FromMilliseconds(20);
 		}
 
 		/// <summary>
@@ -46,11 +52,17 @@ namespace SpaceGame
 			camera = new Player.Camera(this, 50.0f * Vector3.Backward, Vector3.Zero, Vector3.Up);
 			Components.Add(camera);
 
-			modelManager = new Models.ModelManager(this);
+			modelManager = new Models.ModelManager(this, graphics.GraphicsDevice);
 			Components.Add(modelManager);
 
 			Model playerShipModel = Content.Load<Model>(@"Models\PlayerShipModel");
 			playerShip = new Player.PlayerShip(this, playerShipModel);
+
+			gameState = new GameState();
+			levelManager = new Levels.LevelManager();
+
+			levelManager.SelectLevel(1);
+			modelManager.LoadLevel(levelManager.currentLevel);
 
 			base.Initialize();
 		}
@@ -64,7 +76,7 @@ namespace SpaceGame
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			debugText = Content.Load<SpriteFont>(@"Misc\DebugText");
+			displayText = Content.Load<SpriteFont>(@"Misc\DebugText");
 
 			// TODO: use this.Content to load your game content here
 		}
@@ -86,18 +98,101 @@ namespace SpaceGame
 		protected override void Update(GameTime gameTime)
 		{
 			// Allows the game to exit
-			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+			if (Keyboard.GetState().IsKeyDown(Keys.Escape))
 				this.Exit();
 
-			playerShip.Update();
-			camera.UpdateCamera(gameTime, playerShip);
-
-			if (Keyboard.GetState().IsKeyDown(Keys.Space))
+			if (gameState.currentState == State.MainMenu)
 			{
-				modelManager.FireShot(playerShip, gameTime);
+				if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+				{
+					levelManager.SelectLevel(1);
+					modelManager.LoadLevel(levelManager.currentLevel);
+					gameState.ChangeState("GamePlay");
+				}
 			}
 
-			base.Update(gameTime);
+			if (gameState.currentState == State.GamePlay)
+			{
+				playerShip.Update();
+
+				if (Keyboard.GetState().IsKeyDown(Keys.Space))
+				{
+					modelManager.FireShot(playerShip, gameTime);
+				}
+
+				//If the player loses all their health, go to game over.
+				if (playerShip.health <= 0)
+				{
+					gameState.ChangeState("GameOver");
+				}
+
+				//If the player passes the goal, move to the next level.
+				if (playerShip.position.Z < Misc.Settings.Z_REGION_SPAWN_BOUNDARY)
+				{
+					gameState.ChangeState("ChangeLevel");
+				}
+
+				camera.UpdateCamera(gameTime, playerShip);
+
+				base.Update(gameTime);
+			}
+
+			if (gameState.currentState == State.ChangeLevel)
+			{
+				if (timeToNextLevel == 0)
+				{
+					levelManager.NextLevel();
+					if (levelManager.currentSetLevel == -1)
+					{
+						gameState.ChangeState("Winner");
+					}
+					else
+					{
+						timeToNextLevel = Misc.Settings.TIME_BETWEEN_LEVELS;
+					}
+				}
+				else if (timeToNextLevel == 1)
+				{
+					playerShip.Reset(true);
+					camera.Reset();
+					modelManager.LoadLevel(levelManager.currentLevel);
+					gameState.ChangeState("GamePlay");
+					timeToNextLevel = 0;
+				}
+				else
+				{
+					timeToNextLevel--;
+				}
+			}
+
+			if (gameState.currentState == State.GameOver)
+			{
+				if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+				{
+					playerShip.Reset(false);
+					camera.Reset();
+					modelManager.Reset();
+					levelManager.Reset();
+
+					levelManager.SelectLevel(1);
+					modelManager.LoadLevel(levelManager.currentLevel);
+					Misc.Settings.GAME_SPEED = 1.0f;
+
+					gameState.ChangeState("MainMenu");
+
+				}
+
+				camera.UpdateCamera(gameTime, playerShip);
+				base.Update(gameTime);
+			}
+
+			if (gameState.currentState == State.Winner)
+			{
+				if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+				{
+					this.Exit();
+				}
+			}
 		}
 
 		/// <summary>
@@ -108,23 +203,48 @@ namespace SpaceGame
 		{
 			GraphicsDevice.Clear(Color.Black);
 
+			if (gameState.currentState != State.GameOver && gameState.currentState != State.MainMenu)
+			{
+				playerShip.Draw(camera);
+			}
+
+			base.Draw(gameTime);
+
 			//Debug Text Rendering.
 			spriteBatch.Begin();
 
-			debug =		"Health: " + playerShip.health.ToString() + "\n" +
-						"Score: " + playerShip.playerScore.ToString();
-			spriteBatch.DrawString(debugText, debug, new Vector2(10, 10), Color.White);
+			if (gameState.currentState == State.MainMenu)
+			{
+				display = "Space Blaster!\n\n\n\nPress Enter to Begin";
+				spriteBatch.DrawString(displayText, display, new Vector2(GraphicsDevice.Viewport.Width / 2 - 200, GraphicsDevice.Viewport.Height / 2), Color.White);
+			}
+
+			if (gameState.currentState == State.GamePlay)
+			{
+				display =	"Health: " + playerShip.health.ToString() + "\n" +
+							"Score: " + playerShip.playerScore.ToString();
+				spriteBatch.DrawString(displayText, display, new Vector2(10, 10), Color.White);
+			}
+
+			if (gameState.currentState == State.ChangeLevel)
+			{
+				display = "Warping to the next mission in: " + timeToNextLevel;
+				spriteBatch.DrawString(displayText, display, new Vector2(GraphicsDevice.Viewport.Width / 2 - 200, GraphicsDevice.Viewport.Height / 2), Color.White);
+			}
+
+			if (gameState.currentState == State.GameOver)
+			{
+				display = "Game Over! Your score is: " + playerShip.playerScore.ToString();
+				spriteBatch.DrawString(displayText, display, new Vector2(GraphicsDevice.Viewport.Width / 2 - 200, GraphicsDevice.Viewport.Height / 2), Color.White);
+			}
+
+			if (gameState.currentState == State.Winner)
+			{
+				display = "YOU WON! YOU SAVED THE UNIVERSE!";
+				spriteBatch.DrawString(displayText, display, new Vector2(GraphicsDevice.Viewport.Width / 2 - 200, GraphicsDevice.Viewport.Height / 2), Color.White);
+			}
 
 			spriteBatch.End();
-
-			playerShip.Draw(camera);
-
-			base.Draw(gameTime);
-		}
-
-		public void GameOver(float inputScore)
-		{
-			//Change game state and display score.
 		}
 	}
 }

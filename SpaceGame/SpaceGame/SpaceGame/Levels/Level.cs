@@ -18,8 +18,15 @@ namespace SpaceGame.Levels
 	/// say how many enemies will be generated throughout play.
 	/// </summary>
 
-	class Level
+	public class Level
 	{
+		public int AsteroidsToSpawn { get; set; }
+		public int EnemiesToSpawn { get; set; }
 
+		public Level(int numberOfAsteroids, int numberOfEnemies)
+		{
+			AsteroidsToSpawn = numberOfAsteroids;
+			EnemiesToSpawn = numberOfEnemies;
+		}
 	}
 }

@@ -75,7 +75,7 @@ namespace SpaceGame.Player
 				}
 			}
 
-			position += Misc.Settings.GAME_SPEED * Vector3.Forward;
+			position += Misc.Settings.GAME_SPEED * Vector3.Forward * Misc.Settings.SHIP_SPEED;
 
 			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
 
@@ -85,18 +85,17 @@ namespace SpaceGame.Player
 		public void DamagePlayer(int inputAmount)
 		{
 			health -= inputAmount;
-
-			if (health < 0.0f)
-			{
-				DestroyPlayer();
-			}
 		}
 
-		private void DestroyPlayer()
+		public void Reset(bool alive)
 		{
-			//Explode
-
-			//Change Game State
+			position = Vector3.Zero;
+			world = Matrix.CreateWorld(position, Vector3.Forward, Vector3.Up);
+			health = 100;
+			if (!alive)
+			{
+				playerScore = 0;
+			}
 		}
 	}
 }

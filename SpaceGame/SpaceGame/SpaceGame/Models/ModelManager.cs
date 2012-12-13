@@ -20,14 +20,29 @@ namespace SpaceGame.Models
 		public List<BasicModel> models = new List<BasicModel>();
 		public List<Projectile> shots = new List<Projectile>();
 		private Game game;
+		private GraphicsDevice graphicsDevice;
 
 		//Bullet variables
 		private int shotCooldown = 0;
 
-		public ModelManager(Game inputGame)
+		//Explosions
+		List<Particles.ParticleExplosion> explosions = new List<Particles.ParticleExplosion>();
+		Particles.ParticleExplosionSettings particleExplosionSettings = new Particles.ParticleExplosionSettings();
+		Particles.ParticleSettings particleSettings = new Particles.ParticleSettings();
+		Texture2D explosionTexture;
+		Texture2D explosionColorTexture;
+		Effect explosionEffect;
+
+		//Stars
+		private Particles.ParticleBackground stars;
+		Effect starEffect;
+		Texture2D starTexture;
+
+		public ModelManager(Game inputGame, GraphicsDevice inputGraphicsDevice)
 			: base(inputGame)
 		{
 			game = inputGame;
+			graphicsDevice = inputGraphicsDevice;
 		}
 
 		/// <summary>
@@ -36,28 +51,24 @@ namespace SpaceGame.Models
 		/// </summary>
 		public override void Initialize()
 		{
-			//Debug Setup
-
-			//Model asteroid = ((Game1)Game).Content.Load<Model>(@"Models/AsteroidModel");
-			////Example Asteroids.
-			//Asteroid asteroid1 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.TOP_REGION_SPAWN_BOUNDARY, Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, -500));
-			//Asteroid asteroid2 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.TOP_REGION_SPAWN_BOUNDARY, Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY, -1000));
-			//Asteroid asteroid3 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, Misc.Settings.LEFT_REGION_SPAWN_BOUNDARY, -1500));
-			//Asteroid asteroid4 = new Asteroid((Game1)Game, asteroid, new Vector3(Misc.Settings.BOTTOM_REGION_SPAWN_BOUNDARY, Misc.Settings.RIGHT_REGION_SPAWN_BOUNDARY, -2000));
-
-			//models.Add(asteroid1);
-			//models.Add(asteroid2);
-			//models.Add(asteroid3);
-			//models.Add(asteroid4);
-
-			GenerateAsteroids(100);
-
 			base.Initialize();
 		}
 
 		protected override void LoadContent()
 		{
+			explosionTexture = Game.Content.Load<Texture2D>(@"Textures\Particle");
+			explosionColorTexture = Game.Content.Load<Texture2D>(@"Textures\ParticleColors");
+			explosionEffect = Game.Content.Load<Effect>(@"Misc\Particle");
 
+			explosionEffect.CurrentTechnique = explosionEffect.Techniques["Technique1"];
+			explosionEffect.Parameters["theTexture"].SetValue(explosionTexture);
+
+			starTexture = Game.Content.Load<Texture2D>(@"Textures\Stars");
+			starEffect = explosionEffect.Clone();
+			starEffect.CurrentTechnique = starEffect.Techniques["Technique1"];
+			starEffect.Parameters["theTexture"].SetValue(explosionTexture);
+
+			stars = new Particles.ParticleBackground(graphicsDevice, new Vector3(200, 200, Misc.Settings.Z_REGION_SPAWN_BOUNDARY), 3000, starTexture, particleSettings, starEffect);
 		}
 
 		/// <summary>
@@ -66,6 +77,8 @@ namespace SpaceGame.Models
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		public override void Update(GameTime gameTime)
 		{
+			Random randomValue = new Random();
+
 			for (int i = 0; i < models.Count; i++)
 			{
 				models[i].Update();
@@ -79,10 +92,19 @@ namespace SpaceGame.Models
 					{
 						((Game1)Game).playerShip.DamagePlayer(models[i].damageToPlayer);
 						models.RemoveAt(i);
+						
+						explosions.Add(new Particles.ParticleExplosion(graphicsDevice, models[i].position, randomValue.Next(particleExplosionSettings.minLife, particleExplosionSettings.maxLife), randomValue.Next(particleExplosionSettings.minRoundTime, particleExplosionSettings.maxRoundTime), randomValue.Next(particleExplosionSettings.minParticlesPerRound, particleExplosionSettings.maxParticlesPerRound), randomValue.Next(particleExplosionSettings.minParticles, particleExplosionSettings.maxParticles), explosionColorTexture, particleSettings, explosionEffect));
+
 						i--;
+
+						if (((Game1)Game).playerShip.health <= 0)
+						{
+							explosions.Add(new Particles.ParticleExplosion(graphicsDevice, ((Game1)Game).playerShip.position, randomValue.Next(3000, 5000), randomValue.Next(particleExplosionSettings.minRoundTime, particleExplosionSettings.maxRoundTime), randomValue.Next(particleExplosionSettings.minParticlesPerRound, particleExplosionSettings.maxParticlesPerRound), randomValue.Next(particleExplosionSettings.minParticles, particleExplosionSettings.maxParticles), explosionColorTexture, particleSettings, explosionEffect));
+						}
 					}
 				}
 			}
+
 			for (int i = 0; i < shots.Count; i++)
 			{
 				shots[i].Update();
@@ -101,6 +123,7 @@ namespace SpaceGame.Models
 							if (models[j].health <= 0)
 							{
 								((Game1)Game).playerShip.playerScore += models[j].score;
+								explosions.Add(new Particles.ParticleExplosion(graphicsDevice, shots[i].position, randomValue.Next(particleExplosionSettings.minLife, particleExplosionSettings.maxLife), randomValue.Next(particleExplosionSettings.minRoundTime, particleExplosionSettings.maxRoundTime), randomValue.Next(particleExplosionSettings.minParticlesPerRound, particleExplosionSettings.maxParticlesPerRound), randomValue.Next(particleExplosionSettings.minParticles, particleExplosionSettings.maxParticles), explosionColorTexture, particleSettings, explosionEffect));
 								models.RemoveAt(j);
 							}
 							shots.RemoveAt(i);
@@ -109,6 +132,16 @@ namespace SpaceGame.Models
 							break;
 						}
 					}
+				}
+			}
+
+			for (int i = 0; i < explosions.Count; i++)
+			{
+				explosions[i].Update(gameTime);
+				if (explosions[i].IsDead)
+				{
+					explosions.RemoveAt(i);
+					i--;
 				}
 			}
 
@@ -121,10 +154,18 @@ namespace SpaceGame.Models
 			{
 				model.Draw(((Game1)Game).camera);
 			}
+
 			foreach (Projectile shot in shots)
 			{
 				shot.Draw(((Game1)Game).camera);
 			}
+
+			foreach (Particles.ParticleExplosion explosion in explosions)
+			{
+				explosion.Draw(((Game1)Game).camera);
+			}
+
+			stars.Draw(((Game1)Game).camera);
 
 			base.Draw(gameTime);
 		}
@@ -171,6 +212,46 @@ namespace SpaceGame.Models
 				//Success!  Add it to the list.
 				models.Add(temp);
 			}
+		}
+
+		//public void GenerateEnemies(int amountToGenerate)
+		//{
+		//    List<BasicEnemy> createdEnemies = new List<BasicEnemy>();
+		//    Model enemyModel = ((Game1)Game).Content.Load<Model>(@"Models/AsteroidModel");
+
+		//    Random randomValue = new Random();
+
+		//    for (int i = 0; i < amountToGenerate; i++)
+		//    {
+		//        //Creates an asteroid
+		//        BasicEnemy temp = new BasicEnemy();
+
+		//        //Checks to make sure this asteroid does not conflict with existing asteroids.
+		//        for (int j = 0; j < models.Count; j++)
+		//        {
+		//            //If it conflicts, generate a new one and rescan the list of models.
+		//            if (temp.CollidesWith(models[j].model, models[j].GetWorld()))
+		//            {
+		//                temp = new BasicEnemy();
+		//                j = 0;
+		//            }
+		//        }
+
+		//        //Success!  Add it to the list.
+		//        models.Add(temp);
+		//    }
+		//}
+
+		public void Reset()
+		{
+			models.RemoveRange(0, models.Count);
+			shots.RemoveRange(0, shots.Count);
+			explosions.RemoveRange(0, explosions.Count);
+		}
+
+		public void LoadLevel(Levels.Level inputLevel)
+		{
+			GenerateAsteroids(inputLevel.AsteroidsToSpawn);
 		}
 	}
 }
